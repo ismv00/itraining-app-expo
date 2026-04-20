@@ -179,7 +179,7 @@ const ACCENT = "#C8F04C";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0e0e0e" },
-  content: { padding: 24, paddingTop: 60, paddingBottom: 40 },
+  content: { padding: 24, paddingTop: 90, paddingBottom: 40 },
   centered: {
     flex: 1,
     backgroundColor: "#0e0e0e",
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "Syne_700Bold",
-    fontSize: 22,
+    fontSize: 28,
     color: "#fff",
     marginBottom: 28,
   },
@@ -207,13 +207,13 @@ const styles = StyleSheet.create({
   avatarText: { fontFamily: "Syne_800ExtraBold", fontSize: 24, color: ACCENT },
   name: {
     fontFamily: "Syne_700Bold",
-    fontSize: 20,
+    fontSize: 26,
     color: "#fff",
     marginBottom: 4,
   },
   email: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 13,
+    fontSize: 18,
     color: "rgba(255,255,255,0.3)",
     marginBottom: 10,
   },
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   section: { marginBottom: 20 },
   sectionTitle: {
     fontFamily: "Syne_700Bold",
-    fontSize: 13,
+    fontSize: 18,
     color: "rgba(255,255,255,0.4)",
     marginBottom: 8,
     textTransform: "uppercase",
@@ -251,19 +251,19 @@ const styles = StyleSheet.create({
   },
   avatarSmText: {
     fontFamily: "Syne_800ExtraBold",
-    fontSize: 12,
+    fontSize: 16,
     color: ACCENT,
   },
   cardInfo: { flex: 1 },
   cardName: {
     fontFamily: "Syne_700Bold",
-    fontSize: 13,
+    fontSize: 16,
     color: "#fff",
     marginBottom: 2,
   },
   cardSub: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 11,
+    fontSize: 14,
     color: "rgba(255,255,255,0.3)",
   },
   cardFooter: {
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   },
   cardFooterText: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 11,
+    fontSize: 14,
     color: "rgba(255,255,255,0.25)",
   },
   infoRow: {

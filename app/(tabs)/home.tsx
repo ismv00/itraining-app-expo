@@ -204,7 +204,7 @@ const ACCENT = "#C8F04C";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0e0e0e" },
-  content: { padding: 24, paddingTop: 60 },
+  content: { padding: 24, paddingTop: 90 },
   centered: {
     flex: 1,
     backgroundColor: "#0e0e0e",
@@ -213,14 +213,14 @@ const styles = StyleSheet.create({
   },
   greeting: {
     fontFamily: "Syne_700Bold",
-    fontSize: 22,
+    fontSize: 28,
     color: "#fff",
     marginBottom: 4,
   },
   accentText: { color: ACCENT },
   date: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 12,
+    fontSize: 18,
     color: "rgba(255,255,255,0.25)",
     marginBottom: 20,
     textTransform: "capitalize",
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   personalName: { fontFamily: "Syne_700Bold", fontSize: 13, color: "#fff" },
   personalLabel: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 11,
+    fontSize: 16,
     color: "rgba(255,255,255,0.25)",
   },
   emptyCard: {
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 12,
+    fontSize: 16,
     color: "rgba(255,255,255,0.2)",
     marginBottom: 10,
   },
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
   btnSmText: { fontFamily: "Syne_700Bold", fontSize: 11, color: "#0e0e0e" },
   sectionTitle: {
     fontFamily: "Syne_700Bold",
-    fontSize: 14,
+    fontSize: 18,
     color: "#fff",
     marginBottom: 12,
   },
@@ -290,13 +290,13 @@ const styles = StyleSheet.create({
   },
   workoutTitle: {
     fontFamily: "Syne_700Bold",
-    fontSize: 13,
+    fontSize: 16,
     color: "#fff",
     marginBottom: 3,
   },
   workoutDesc: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 11,
+    fontSize: 14,
     color: "rgba(255,255,255,0.25)",
     marginBottom: 10,
   },
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   },
   exPillText: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 10,
+    fontSize: 13,
     color: "rgba(255,255,255,0.35)",
   },
 });

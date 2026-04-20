@@ -220,7 +220,7 @@ const ACCENT = "#C8F04C";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0e0e0e" },
-  content: { padding: 24, paddingTop: 60 },
+  content: { padding: 24, paddingTop: 90 },
   centered: {
     flex: 1,
     backgroundColor: "#0e0e0e",
@@ -229,13 +229,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: "Syne_700Bold",
-    fontSize: 22,
+    fontSize: 28,
     color: "#fff",
     marginBottom: 4,
   },
   subtitle: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 12,
+    fontSize: 20,
     color: "rgba(255,255,255,0.3)",
     marginBottom: 24,
   },
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.08)",
     borderRadius: 10,
     padding: 13,
-    fontSize: 13,
+    fontSize: 18,
     color: "#fff",
     fontFamily: "DM_Sans_400Regular",
   },
@@ -261,13 +261,13 @@ const styles = StyleSheet.create({
   searchBtnText: { fontFamily: "Syne_700Bold", fontSize: 13, color: "#0e0e0e" },
   error: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 12,
+    fontSize: 16,
     color: "#f87171",
     marginBottom: 12,
   },
   success: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 12,
+    fontSize: 16,
     color: ACCENT,
     marginBottom: 12,
   },
@@ -297,13 +297,13 @@ const styles = StyleSheet.create({
   personalInfo: { flex: 1 },
   personalName: {
     fontFamily: "Syne_700Bold",
-    fontSize: 15,
+    fontSize: 18,
     color: "#fff",
     marginBottom: 2,
   },
   personalEmail: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 12,
+    fontSize: 16,
     color: "rgba(255,255,255,0.3)",
   },
   requestBtn: {
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   },
   requestBtnText: {
     fontFamily: "Syne_700Bold",
-    fontSize: 13,
+    fontSize: 16,
     color: "#0e0e0e",
   },
   badge: {
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   },
   hintText: {
     fontFamily: "DM_Sans_400Regular",
-    fontSize: 12,
+    fontSize: 16,
     color: "rgba(255,255,255,0.25)",
     lineHeight: 18,
     textAlign: "center",

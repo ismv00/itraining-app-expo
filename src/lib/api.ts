@@ -1,8 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL:
-    "NEXT_PUBLIC_API_URL=https://api-itraining-production.up.railway.app",
+  baseURL: process.env.EXPO_PUBLIC_API_URL,
 });
 
 export function setAuthToken(token: string) {

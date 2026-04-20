@@ -1,13 +1,16 @@
+import { exerciseLabels } from "@/src/data/exerciseLabels";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { getExerciseByName } from "../../src/exerciseApi";
 import { api } from "../../src/lib/api";
 
 interface Exercise {
@@ -17,6 +20,7 @@ interface Exercise {
   reps: number;
   weight?: number;
   finalWeight?: number;
+  gifUrl?: string;
 }
 
 interface Workout {
@@ -30,6 +34,12 @@ export default function WorkoutsScreen() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [exerciseImages, setExerciseImages] = useState<Record<string, string>>(
+    {},
+  );
+  const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>(
+    {},
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -57,6 +67,21 @@ export default function WorkoutsScreen() {
     }
   }
 
+  async function handleExpand(workoutId: string, exercises: Exercise[]) {
+    setExpandedId(expandedId === workoutId ? null : workoutId);
+    if (expandedId === workoutId) return;
+
+    for (const ex of exercises) {
+      if (exerciseImages[ex.id]) continue;
+      setLoadingImages((prev) => ({ ...prev, [ex.id]: true }));
+      const result = await getExerciseByName(ex.name);
+      if (result?.gifUrl) {
+        setExerciseImages((prev) => ({ ...prev, [ex.id]: result.gifUrl }));
+      }
+      setLoadingImages((prev) => ({ ...prev, [ex.id]: false }));
+    }
+  }
+
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -81,12 +106,9 @@ export default function WorkoutsScreen() {
           <TouchableOpacity
             key={workout.id}
             style={styles.workoutCard}
-            onPress={() =>
-              setExpandedId(expandedId === workout.id ? null : workout.id)
-            }
+            onPress={() => handleExpand(workout.id, workout.exercises || [])}
             activeOpacity={0.8}
           >
-            {/* header */}
             <View style={styles.cardHeader}>
               <View style={styles.cardHeaderLeft}>
                 <Text style={styles.workoutTitle}>{workout.title}</Text>
@@ -104,7 +126,6 @@ export default function WorkoutsScreen() {
               </View>
             </View>
 
-            {/* exercícios expandidos */}
             {expandedId === workout.id && (
               <View style={styles.exerciseList}>
                 <View style={styles.divider} />
@@ -113,7 +134,20 @@ export default function WorkoutsScreen() {
                 ) : (
                   workout.exercises?.map((ex) => (
                     <View key={ex.id} style={styles.exerciseItem}>
-                      <Text style={styles.exerciseName}>{ex.name}</Text>
+                      {loadingImages[ex.id] ? (
+                        <View style={styles.imagePlaceholder}>
+                          <ActivityIndicator color="#C8F04C" size="small" />
+                        </View>
+                      ) : exerciseImages[ex.id] ? (
+                        <Image
+                          source={{ uri: exerciseImages[ex.id] }}
+                          style={styles.exerciseImage}
+                        />
+                      ) : null}
+
+                      <Text style={styles.exerciseName}>
+                        {exerciseLabels[ex.name] || ex.name}
+                      </Text>
                       <View style={styles.exerciseStats}>
                         <View style={styles.stat}>
                           <Text style={styles.statValue}>{ex.sets}</Text>
@@ -165,7 +199,7 @@ const ACCENT = "#C8F04C";
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#0e0e0e" },
-  content: { padding: 24, paddingTop: 60 },
+  content: { padding: 24, paddingTop: 90 },
   centered: {
     flex: 1,
     backgroundColor: "#0e0e0e",
@@ -240,6 +274,22 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 12,
     marginBottom: 8,
+  },
+  exerciseImage: {
+    width: "100%",
+    height: 180,
+    borderRadius: 8,
+    marginBottom: 10,
+    resizeMode: "contain",
+  },
+  imagePlaceholder: {
+    width: "100%",
+    height: 180,
+    borderRadius: 8,
+    marginBottom: 10,
+    backgroundColor: "#222",
+    alignItems: "center",
+    justifyContent: "center",
   },
   exerciseName: {
     fontFamily: "DM_Sans_500Medium",
