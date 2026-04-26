@@ -1,4 +1,3 @@
-import { exerciseLabels } from "@/src/data/exerciseLabels";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
@@ -10,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { exerciseLabels } from "../../src/data/exerciseLabels";
 import { getExerciseByName } from "../../src/exerciseApi";
 import { api } from "../../src/lib/api";
 
@@ -20,7 +20,6 @@ interface Exercise {
   reps: number;
   weight?: number;
   finalWeight?: number;
-  gifUrl?: string;
 }
 
 interface Workout {
@@ -34,9 +33,13 @@ export default function WorkoutsScreen() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedExercise, setExpandedExercise] = useState<string | null>(null);
   const [exerciseImages, setExerciseImages] = useState<Record<string, string>>(
     {},
   );
+  const [exerciseDetails, setExerciseDetails] = useState<
+    Record<string, string[]>
+  >({});
   const [loadingImages, setLoadingImages] = useState<Record<string, boolean>>(
     {},
   );
@@ -67,18 +70,30 @@ export default function WorkoutsScreen() {
     }
   }
 
-  async function handleExpand(workoutId: string, exercises: Exercise[]) {
-    setExpandedId(expandedId === workoutId ? null : workoutId);
-    if (expandedId === workoutId) return;
+  async function handleExpandExercise(
+    exerciseId: string,
+    exerciseName: string,
+  ) {
+    if (expandedExercise === exerciseId) {
+      setExpandedExercise(null);
+      return;
+    }
 
-    for (const ex of exercises) {
-      if (exerciseImages[ex.id]) continue;
-      setLoadingImages((prev) => ({ ...prev, [ex.id]: true }));
-      const result = await getExerciseByName(ex.name);
+    setExpandedExercise(exerciseId);
+
+    if (!exerciseImages[exerciseId]) {
+      setLoadingImages((prev) => ({ ...prev, [exerciseId]: true }));
+      const result = await getExerciseByName(exerciseName);
       if (result?.gifUrl) {
-        setExerciseImages((prev) => ({ ...prev, [ex.id]: result.gifUrl }));
+        setExerciseImages((prev) => ({ ...prev, [exerciseId]: result.gifUrl }));
       }
-      setLoadingImages((prev) => ({ ...prev, [ex.id]: false }));
+      if (result?.instructions) {
+        setExerciseDetails((prev) => ({
+          ...prev,
+          [exerciseId]: result.instructions,
+        }));
+      }
+      setLoadingImages((prev) => ({ ...prev, [exerciseId]: false }));
     }
   }
 
@@ -106,9 +121,13 @@ export default function WorkoutsScreen() {
           <TouchableOpacity
             key={workout.id}
             style={styles.workoutCard}
-            onPress={() => handleExpand(workout.id, workout.exercises || [])}
+            onPress={() => {
+              setExpandedId(expandedId === workout.id ? null : workout.id);
+              setExpandedExercise(null);
+            }}
             activeOpacity={0.8}
           >
+            {/* header */}
             <View style={styles.cardHeader}>
               <View style={styles.cardHeaderLeft}>
                 <Text style={styles.workoutTitle}>{workout.title}</Text>
@@ -126,6 +145,7 @@ export default function WorkoutsScreen() {
               </View>
             </View>
 
+            {/* exercícios */}
             {expandedId === workout.id && (
               <View style={styles.exerciseList}>
                 <View style={styles.divider} />
@@ -134,20 +154,23 @@ export default function WorkoutsScreen() {
                 ) : (
                   workout.exercises?.map((ex) => (
                     <View key={ex.id} style={styles.exerciseItem}>
-                      {loadingImages[ex.id] ? (
-                        <View style={styles.imagePlaceholder}>
-                          <ActivityIndicator color="#C8F04C" size="small" />
-                        </View>
-                      ) : exerciseImages[ex.id] ? (
-                        <Image
-                          source={{ uri: exerciseImages[ex.id] }}
-                          style={styles.exerciseImage}
-                        />
-                      ) : null}
+                      {/* info principal */}
+                      <View style={styles.exerciseRow}>
+                        <Text style={styles.exerciseName}>
+                          {exerciseLabels[ex.name] || ex.name}
+                        </Text>
+                        <TouchableOpacity
+                          onPress={() => handleExpandExercise(ex.id, ex.name)}
+                          style={styles.detailBtn}
+                        >
+                          <Text style={styles.detailBtnText}>
+                            {expandedExercise === ex.id
+                              ? "Fechar"
+                              : "Ver detalhes"}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
 
-                      <Text style={styles.exerciseName}>
-                        {exerciseLabels[ex.name] || ex.name}
-                      </Text>
                       <View style={styles.exerciseStats}>
                         <View style={styles.stat}>
                           <Text style={styles.statValue}>{ex.sets}</Text>
@@ -183,6 +206,52 @@ export default function WorkoutsScreen() {
                           </>
                         )}
                       </View>
+
+                      {/* detalhes expandidos */}
+                      {expandedExercise === ex.id && (
+                        <View style={styles.exerciseDetails}>
+                          {loadingImages[ex.id] ? (
+                            <View style={styles.imagePlaceholder}>
+                              <ActivityIndicator color="#C8F04C" size="small" />
+                            </View>
+                          ) : exerciseImages[ex.id] ? (
+                            <Image
+                              source={{ uri: exerciseImages[ex.id] }}
+                              style={styles.exerciseImage}
+                              resizeMode="contain"
+                            />
+                          ) : (
+                            <View style={styles.imagePlaceholder}>
+                              <Text style={styles.emptyText}>
+                                Imagem não disponível
+                              </Text>
+                            </View>
+                          )}
+
+                          {/* instruções */}
+                          {exerciseDetails[ex.id] &&
+                            exerciseDetails[ex.id].length > 0 && (
+                              <View style={styles.instructionsBox}>
+                                <Text style={styles.instructionsTitle}>
+                                  Como executar
+                                </Text>
+                                {exerciseDetails[ex.id].map((step, index) => (
+                                  <View
+                                    key={index}
+                                    style={styles.instructionRow}
+                                  >
+                                    <Text style={styles.instructionNumber}>
+                                      {index + 1}
+                                    </Text>
+                                    <Text style={styles.instructionText}>
+                                      {step}
+                                    </Text>
+                                  </View>
+                                ))}
+                              </View>
+                            )}
+                        </View>
+                      )}
                     </View>
                   ))
                 )}
@@ -275,27 +344,28 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 8,
   },
-  exerciseImage: {
-    width: "100%",
-    height: 180,
-    borderRadius: 8,
-    marginBottom: 10,
-    resizeMode: "contain",
-  },
-  imagePlaceholder: {
-    width: "100%",
-    height: 180,
-    borderRadius: 8,
-    marginBottom: 10,
-    backgroundColor: "#222",
+  exerciseRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    justifyContent: "center",
+    marginBottom: 10,
   },
   exerciseName: {
     fontFamily: "DM_Sans_500Medium",
     fontSize: 13,
     color: "rgba(255,255,255,0.8)",
-    marginBottom: 8,
+    flex: 1,
+  },
+  detailBtn: {
+    backgroundColor: "rgba(200,240,76,0.1)",
+    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+  },
+  detailBtnText: {
+    fontFamily: "DM_Sans_400Regular",
+    fontSize: 11,
+    color: ACCENT,
   },
   exerciseStats: { flexDirection: "row", alignItems: "center", gap: 12 },
   stat: { alignItems: "center" },
@@ -310,5 +380,59 @@ const styles = StyleSheet.create({
     width: 0.5,
     height: 24,
     backgroundColor: "rgba(255,255,255,0.08)",
+  },
+  exerciseDetails: {
+    marginTop: 12,
+    borderTopWidth: 0.5,
+    borderTopColor: "rgba(255,255,255,0.05)",
+    paddingTop: 12,
+  },
+  exerciseImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 8,
+  },
+  imagePlaceholder: {
+    width: "100%",
+    height: 200,
+    borderRadius: 8,
+    backgroundColor: "#222",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  instructionsBox: {
+    marginTop: 12,
+    borderTopWidth: 0.5,
+    borderTopColor: "rgba(255,255,255,0.05)",
+    paddingTop: 12,
+  },
+  instructionsTitle: {
+    fontFamily: "Syne_700Bold",
+    fontSize: 12,
+    color: "rgba(255,255,255,0.4)",
+    marginBottom: 10,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  instructionRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 8,
+    alignItems: "flex-start",
+  },
+  instructionNumber: {
+    fontFamily: "Syne_700Bold",
+    fontSize: 12,
+    color: ACCENT,
+    width: 16,
+    flexShrink: 0,
+  },
+  instructionText: {
+    fontFamily: "DM_Sans_400Regular",
+    fontSize: 12,
+    color: "rgba(255,255,255,0.5)",
+    flex: 1,
+    lineHeight: 18,
   },
 });

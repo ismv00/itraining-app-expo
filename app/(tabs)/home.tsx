@@ -1,3 +1,4 @@
+import { exerciseLabels } from "@/src/data/exerciseLabels";
 import { useFocusEffect, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { useCallback, useState } from "react";
@@ -172,7 +173,12 @@ export default function HomeScreen() {
         </View>
       ) : (
         workouts.map((workout) => (
-          <View key={workout.id} style={styles.workoutCard}>
+          <TouchableOpacity
+            key={workout.id}
+            style={styles.workoutCard}
+            onPress={() => router.push("/(tabs)/workouts")}
+            activeOpacity={0.8}
+          >
             <Text style={styles.workoutTitle}>{workout.title}</Text>
             {workout.description && (
               <Text style={styles.workoutDesc}>{workout.description}</Text>
@@ -181,7 +187,9 @@ export default function HomeScreen() {
               <View style={styles.exRow}>
                 {workout.exercises.slice(0, 2).map((ex) => (
                   <View key={ex.id} style={styles.exPill}>
-                    <Text style={styles.exPillText}>{ex.name}</Text>
+                    <Text style={styles.exPillText}>
+                      {exerciseLabels[ex.name] || ex.name}
+                    </Text>
                   </View>
                 ))}
                 {workout.exercises.length > 2 && (
@@ -193,7 +201,7 @@ export default function HomeScreen() {
                 )}
               </View>
             )}
-          </View>
+          </TouchableOpacity>
         ))
       )}
     </ScrollView>
